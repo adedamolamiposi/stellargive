@@ -19,6 +19,14 @@ pub enum CampaignStatus {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[contracttype]
+pub struct CreatedEvent {
+    pub id: u64,
+    pub creator: Address,
+    pub target_amount: i128,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+#[contracttype]
 pub struct Campaign {
     pub id: u64,
     pub creator: Address,
@@ -176,15 +184,12 @@ impl StellarGiveContract {
 
         write_campaign(&env, &campaign);
         env.events().publish(
-            (symbol_short!("campaign"), symbol_short!("created")),
-            (
+            (symbol_short!("created"),),
+            CreatedEvent {
                 id,
                 creator,
-                beneficiary,
-                campaign.target_amount,
-                campaign.deadline,
-                accepted_token,
-            ),
+                target_amount: campaign.target_amount,
+            },
         );
 
         Ok(id)
@@ -303,8 +308,8 @@ impl StellarGiveContract {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use soroban_sdk::testutils::{Address as _, Ledger};
-    use soroban_sdk::{token, Address, Env, String};
+    use soroban_sdk::testutils::{Address as _, Events as _, Ledger};
+    use soroban_sdk::{token, Address, Env, String, TryFromVal};
 
     fn set_timestamp(env: &Env, timestamp: u64) {
         let mut ledger = env.ledger().get();
@@ -363,6 +368,41 @@ mod tests {
         assert_eq!(campaign.beneficiary, beneficiary);
         assert_eq!(campaign.target_amount, 500_000);
         assert_eq!(campaign.raised_amount, 0);
+    }
+
+    #[test]
+    fn create_campaign_emits_created_event() {
+        let (env, client, creator, beneficiary, _donor, token_client, _) = setup();
+        set_timestamp(&env, 1_000);
+
+        let target_amount: i128 = 500_000;
+        let id = client.create_campaign(
+            &creator,
+            &beneficiary,
+            &String::from_str(&env, "Flood Relief"),
+            &target_amount,
+            &2_000,
+            &token_client.address,
+        );
+
+        let event = env
+            .events()
+            .all()
+            .iter()
+            .find(|(addr, topics, _)| {
+                addr == &client.address
+                    && topics
+                        .get(0)
+                        .and_then(|t| Symbol::try_from_val(&env, &t).ok())
+                        == Some(symbol_short!("created"))
+            })
+            .expect("CreatedEvent was not emitted by create_campaign");
+
+        let payload = CreatedEvent::try_from_val(&env, &event.2)
+            .expect("event data did not decode as CreatedEvent");
+        assert_eq!(payload.id, id);
+        assert_eq!(payload.creator, creator);
+        assert_eq!(payload.target_amount, target_amount);
     }
 
     #[test]
