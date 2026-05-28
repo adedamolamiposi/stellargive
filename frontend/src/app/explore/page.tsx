@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { CampaignCard } from "@/components/CampaignCard";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,12 @@ import { Loader2, Search, Compass } from "lucide-react";
 const PAGE_SIZE = 9;
 
 export default function ExplorePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "funded">("active");
 
   const { data, isLoading, isFetching } = useCampaignsPaged(limit);
   const campaigns = data?.campaigns ?? [];
@@ -66,6 +70,33 @@ export default function ExplorePage() {
             autoComplete="off"
             className="pl-9"
           />
+        </div>
+
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Campaign status filters">
+          <Button
+            variant={statusFilter === "all" ? "default" : "outline"}
+            onClick={() => setStatusFilter("all")}
+            role="tab"
+            aria-selected={statusFilter === "all"}
+          >
+            All
+          </Button>
+          <Button
+            variant={statusFilter === "active" ? "default" : "outline"}
+            onClick={() => setStatusFilter("active")}
+            role="tab"
+            aria-selected={statusFilter === "active"}
+          >
+            Active
+          </Button>
+          <Button
+            variant={statusFilter === "funded" ? "default" : "outline"}
+            onClick={() => setStatusFilter("funded")}
+            role="tab"
+            aria-selected={statusFilter === "funded"}
+          >
+            Funded
+          </Button>
         </div>
 
         {isLoading ? (
