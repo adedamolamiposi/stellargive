@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Loader2, PlusCircle } from "lucide-react";
@@ -66,6 +67,8 @@ export function CreateCampaignForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
   const [uploadError, setUploadError] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const createCampaign = useCreateCampaign();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -111,7 +114,46 @@ export function CreateCampaignForm() {
     }
   }
 
-  function onImageSelected(file: File | null) {
+  async function uploadImage(file: File) {
+    setUploadError("");
+    setIsUploadingImage(true);
+    setUploadProgress(0);
+
+    const data = new FormData();
+    data.append("file", file);
+
+    const response = await new Promise<{ metadata_uri: string }>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/ipfs-upload");
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          setUploadProgress(Math.min(100, Math.round((event.loaded / event.total) * 100)));
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status < 200 || xhr.status >= 300) {
+          reject(new Error("Upload failed. Please try again."));
+          return;
+        }
+        try {
+          resolve(JSON.parse(xhr.responseText));
+        } catch {
+          reject(new Error("Unexpected upload response."));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Network error while uploading image."));
+      xhr.send(data);
+    });
+
+    form.setValue("metadataUri", response.metadata_uri, { shouldValidate: true, shouldDirty: true });
+    setUploadProgress(100);
+    setIsUploadingImage(false);
+  }
+
+  async function onImageSelected(file: File | null) {
     setUploadError("");
     if (!file) {
       setSelectedFileName("");
@@ -128,6 +170,15 @@ export function CreateCampaignForm() {
       return;
     }
     setSelectedFileName(file.name);
+    try {
+      await uploadImage(file);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to upload image.";
+      setUploadError(message);
+      form.setValue("metadataUri", "", { shouldValidate: true, shouldDirty: true });
+      setIsUploadingImage(false);
+      setUploadProgress(0);
+    }
   }
 
   return (
@@ -234,13 +285,19 @@ export function CreateCampaignForm() {
                     <Input
                       type="file"
                       accept="image/png,image/jpeg"
-                      disabled={createCampaign.isPending}
-                      onChange={(event) => onImageSelected(event.target.files?.[0] ?? null)}
+                      disabled={createCampaign.isPending || isUploadingImage}
+                      onChange={(event) => void onImageSelected(event.target.files?.[0] ?? null)}
                     />
                   </FormControl>
                   <FormDescription>
                     Upload PNG/JPG image up to 5MB. This will be stored on IPFS.
                   </FormDescription>
+                  {isUploadingImage && (
+                    <div className="space-y-1">
+                      <Progress value={uploadProgress} />
+                      <p className="text-xs text-muted-foreground">Uploading... {uploadProgress}%</p>
+                    </div>
+                  )}
                   {selectedFileName && !uploadError && (
                     <p className="text-xs text-muted-foreground">Selected: {selectedFileName}</p>
                   )}
