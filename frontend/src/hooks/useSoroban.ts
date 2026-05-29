@@ -46,6 +46,9 @@ export function useCreateCampaign() {
       twitter?: string;
     }) => {
       if (!address) throw new Error("Wallet not connected");
+      if (params.beneficiary === CONTRACT_ID) {
+        throw new Error("Beneficiary cannot be the campaign contract address.");
+      }
 
       const args = [
         new Address(address).toScVal(),

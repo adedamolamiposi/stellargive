@@ -92,84 +92,7 @@
         }
       ]
     ],
-    [
-      [
-        "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
-        {
-          "function": {
-            "contract_fn": {
-              "contract_address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
-              "function_name": "create_campaign",
-              "args": [
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                },
-                {
-                  "vec": [
-                    {
-                      "vec": [
-                        {
-                          "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
-                        },
-                        {
-                          "u32": 10000
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "string": "Flood Relief"
-                },
-                {
-                  "string": "https://example.com/meta"
-                },
-                {
-                  "i128": {
-                    "hi": 0,
-                    "lo": 10000000
-                  }
-                },
-                {
-                  "u64": 2000
-                },
-                {
-                  "address": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN"
-                },
-                "void",
-                "void",
-                "void"
-              ]
-            }
-          },
-          "sub_invocations": [
-            {
-              "function": {
-                "contract_fn": {
-                  "contract_address": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN",
-                  "function_name": "transfer",
-                  "args": [
-                    {
-                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                    },
-                    {
-                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
-                    },
-                    {
-                      "i128": {
-                        "hi": 0,
-                        "lo": 100000
-                      }
-                    }
-                  ]
-                }
-              },
-              "sub_invocations": []
-            }
-          ]
-        }
-      ]
-    ],
+    [],
     []
   ],
   "ledger": {
@@ -232,39 +155,6 @@
                 "key": {
                   "ledger_key_nonce": {
                     "nonce": 801925984706572462
-                  }
-                },
-                "durability": "temporary",
-                "val": "void"
-              }
-            },
-            "ext": "v0"
-          },
-          6311999
-        ]
-      ],
-      [
-        {
-          "contract_data": {
-            "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
-            "key": {
-              "ledger_key_nonce": {
-                "nonce": 2032731177588607455
-              }
-            },
-            "durability": "temporary"
-          }
-        },
-        [
-          {
-            "last_modified_ledger_seq": 0,
-            "data": {
-              "contract_data": {
-                "ext": "v0",
-                "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
-                "key": {
-                  "ledger_key_nonce": {
-                    "nonce": 2032731177588607455
                   }
                 },
                 "durability": "temporary",
@@ -410,216 +300,6 @@
         {
           "contract_data": {
             "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
-            "key": {
-              "vec": [
-                {
-                  "symbol": "CCNT"
-                },
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                }
-              ]
-            },
-            "durability": "persistent"
-          }
-        },
-        [
-          {
-            "last_modified_ledger_seq": 0,
-            "data": {
-              "contract_data": {
-                "ext": "v0",
-                "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
-                "key": {
-                  "vec": [
-                    {
-                      "symbol": "CCNT"
-                    },
-                    {
-                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                    }
-                  ]
-                },
-                "durability": "persistent",
-                "val": {
-                  "u32": 1
-                }
-              }
-            },
-            "ext": "v0"
-          },
-          4095
-        ]
-      ],
-      [
-        {
-          "contract_data": {
-            "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
-            "key": {
-              "vec": [
-                {
-                  "symbol": "CMP"
-                },
-                {
-                  "u64": 1
-                }
-              ]
-            },
-            "durability": "persistent"
-          }
-        },
-        [
-          {
-            "last_modified_ledger_seq": 0,
-            "data": {
-              "contract_data": {
-                "ext": "v0",
-                "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
-                "key": {
-                  "vec": [
-                    {
-                      "symbol": "CMP"
-                    },
-                    {
-                      "u64": 1
-                    }
-                  ]
-                },
-                "durability": "persistent",
-                "val": {
-                  "map": [
-                    {
-                      "key": {
-                        "symbol": "accepted_token"
-                      },
-                      "val": {
-                        "address": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "beneficiaries"
-                      },
-                      "val": {
-                        "vec": [
-                          {
-                            "vec": [
-                              {
-                                "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
-                              },
-                              {
-                                "u32": 10000
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "creator"
-                      },
-                      "val": {
-                        "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "deadline"
-                      },
-                      "val": {
-                        "u64": 2000
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "id"
-                      },
-                      "val": {
-                        "u64": 1
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "max_per_donor"
-                      },
-                      "val": "void"
-                    },
-                    {
-                      "key": {
-                        "symbol": "metadata_uri"
-                      },
-                      "val": {
-                        "string": "https://example.com/meta"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "raised_amount"
-                      },
-                      "val": {
-                        "i128": {
-                          "hi": 0,
-                          "lo": 0
-                        }
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "status"
-                      },
-                      "val": {
-                        "vec": [
-                          {
-                            "symbol": "Active"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "target_amount"
-                      },
-                      "val": {
-                        "i128": {
-                          "hi": 0,
-                          "lo": 10000000
-                        }
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "title"
-                      },
-                      "val": {
-                        "string": "Flood Relief"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "twitter"
-                      },
-                      "val": "void"
-                    },
-                    {
-                      "key": {
-                        "symbol": "website"
-                      },
-                      "val": "void"
-                    }
-                  ]
-                }
-              }
-            },
-            "ext": "v0"
-          },
-          4095
-        ]
-      ],
-      [
-        {
-          "contract_data": {
-            "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
             "key": "ledger_key_contract_instance",
             "durability": "persistent"
           }
@@ -638,23 +318,14 @@
                     "executable": {
                       "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
                     },
-                    "storage": [
-                      {
-                        "key": {
-                          "symbol": "NEXT"
-                        },
-                        "val": {
-                          "u64": 2
-                        }
-                      }
-                    ]
+                    "storage": null
                   }
                 }
               }
             },
             "ext": "v0"
           },
-          518400
+          4095
         ]
       ],
       [
@@ -701,7 +372,7 @@
                       "val": {
                         "i128": {
                           "hi": 0,
-                          "lo": 999999900000
+                          "lo": 1000000000000
                         }
                       }
                     },
@@ -775,79 +446,6 @@
                         "i128": {
                           "hi": 0,
                           "lo": 1000000000000
-                        }
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "authorized"
-                      },
-                      "val": {
-                        "bool": true
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "clawback"
-                      },
-                      "val": {
-                        "bool": false
-                      }
-                    }
-                  ]
-                }
-              }
-            },
-            "ext": "v0"
-          },
-          518400
-        ]
-      ],
-      [
-        {
-          "contract_data": {
-            "contract": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN",
-            "key": {
-              "vec": [
-                {
-                  "symbol": "Balance"
-                },
-                {
-                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
-                }
-              ]
-            },
-            "durability": "persistent"
-          }
-        },
-        [
-          {
-            "last_modified_ledger_seq": 0,
-            "data": {
-              "contract_data": {
-                "ext": "v0",
-                "contract": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN",
-                "key": {
-                  "vec": [
-                    {
-                      "symbol": "Balance"
-                    },
-                    {
-                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
-                    }
-                  ]
-                },
-                "durability": "persistent",
-                "val": {
-                  "map": [
-                    {
-                      "key": {
-                        "symbol": "amount"
-                      },
-                      "val": {
-                        "i128": {
-                          "hi": 0,
-                          "lo": 100000
                         }
                       }
                     },
@@ -1006,7 +604,7 @@
             },
             "ext": "v0"
           },
-          518400
+          4095
         ]
       ]
     ]
@@ -1385,7 +983,7 @@
                     {
                       "vec": [
                         {
-                          "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                          "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM"
                         },
                         {
                           "u32": 10000
@@ -1395,7 +993,7 @@
                   ]
                 },
                 {
-                  "string": "Flood Relief"
+                  "string": "Locked Funds"
                 },
                 {
                   "string": "https://example.com/meta"
@@ -1444,7 +1042,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1467,7 +1065,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1491,7 +1089,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1514,7 +1112,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1553,7 +1151,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1585,7 +1183,7 @@
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1606,55 +1204,7 @@
           }
         }
       },
-      "failed_call": false
-    },
-    {
-      "event": {
-        "ext": "v0",
-        "contract_id": "0000000000000000000000000000000000000000000000000000000000000007",
-        "type_": "contract",
-        "body": {
-          "v0": {
-            "topics": [
-              {
-                "symbol": "created"
-              }
-            ],
-            "data": {
-              "map": [
-                {
-                  "key": {
-                    "symbol": "creator"
-                  },
-                  "val": {
-                    "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "id"
-                  },
-                  "val": {
-                    "u64": 1
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "target_amount"
-                  },
-                  "val": {
-                    "i128": {
-                      "hi": 0,
-                      "lo": 10000000
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1672,38 +1222,14 @@
               }
             ],
             "data": {
-              "u64": 1
-            }
-          }
-        }
-      },
-      "failed_call": false
-    },
-    {
-      "event": {
-        "ext": "v0",
-        "contract_id": null,
-        "type_": "diagnostic",
-        "body": {
-          "v0": {
-            "topics": [
-              {
-                "symbol": "fn_call"
-              },
-              {
-                "bytes": "0000000000000000000000000000000000000000000000000000000000000007"
-              },
-              {
-                "symbol": "get_campaign"
+              "error": {
+                "contract": 28
               }
-            ],
-            "data": {
-              "u64": 1
             }
           }
         }
       },
-      "failed_call": false
+      "failed_call": true
     },
     {
       "event": {
@@ -1714,132 +1240,88 @@
           "v0": {
             "topics": [
               {
-                "symbol": "fn_return"
+                "symbol": "error"
               },
               {
-                "symbol": "get_campaign"
+                "error": {
+                  "contract": 28
+                }
               }
             ],
             "data": {
-              "map": [
+              "string": "escalating Ok(ScErrorType::Contract) frame-exit to Err"
+            }
+          }
+        }
+      },
+      "failed_call": true
+    },
+    {
+      "event": {
+        "ext": "v0",
+        "contract_id": null,
+        "type_": "diagnostic",
+        "body": {
+          "v0": {
+            "topics": [
+              {
+                "symbol": "error"
+              },
+              {
+                "error": {
+                  "contract": 28
+                }
+              }
+            ],
+            "data": {
+              "vec": [
                 {
-                  "key": {
-                    "symbol": "accepted_token"
-                  },
-                  "val": {
-                    "address": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN"
-                  }
+                  "string": "contract try_call failed"
                 },
                 {
-                  "key": {
-                    "symbol": "beneficiaries"
-                  },
-                  "val": {
-                    "vec": [
-                      {
-                        "vec": [
-                          {
-                            "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
-                          },
-                          {
-                            "u32": 10000
-                          }
-                        ]
+                  "symbol": "create_campaign"
+                },
+                {
+                  "vec": [
+                    {
+                      "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
+                    },
+                    {
+                      "vec": [
+                        {
+                          "vec": [
+                            {
+                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM"
+                            },
+                            {
+                              "u32": 10000
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "string": "Locked Funds"
+                    },
+                    {
+                      "string": "https://example.com/meta"
+                    },
+                    {
+                      "i128": {
+                        "hi": 0,
+                        "lo": 10000000
                       }
-                    ]
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "creator"
-                  },
-                  "val": {
-                    "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "deadline"
-                  },
-                  "val": {
-                    "u64": 2000
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "id"
-                  },
-                  "val": {
-                    "u64": 1
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "max_per_donor"
-                  },
-                  "val": "void"
-                },
-                {
-                  "key": {
-                    "symbol": "metadata_uri"
-                  },
-                  "val": {
-                    "string": "https://example.com/meta"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "raised_amount"
-                  },
-                  "val": {
-                    "i128": {
-                      "hi": 0,
-                      "lo": 0
-                    }
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "status"
-                  },
-                  "val": {
-                    "vec": [
-                      {
-                        "symbol": "Active"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "target_amount"
-                  },
-                  "val": {
-                    "i128": {
-                      "hi": 0,
-                      "lo": 10000000
-                    }
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "title"
-                  },
-                  "val": {
-                    "string": "Flood Relief"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "twitter"
-                  },
-                  "val": "void"
-                },
-                {
-                  "key": {
-                    "symbol": "website"
-                  },
-                  "val": "void"
+                    },
+                    {
+                      "u64": 2000
+                    },
+                    {
+                      "address": "CACMVW2KK4H5FZDFF2AUCAKQTEJMZZWJUIZF23XMRVYQBSXYLHZ6BKWN"
+                    },
+                    "void",
+                    "void",
+                    "void"
+                  ]
                 }
               ]
             }

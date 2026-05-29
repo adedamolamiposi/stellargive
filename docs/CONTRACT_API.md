@@ -238,6 +238,7 @@ Example JSON-RPC payload
 | `EmptyTitle` | Campaign title is empty on creation. |
 | `NothingToClaim` | Claim attempted but raised amount is zero. |
 | `InvalidShares` | Beneficiary shares missing or do not sum to `10_000`. |
+| `InvalidBeneficiary` | Campaign beneficiary matches the contract address and would lock funds. |
 | `TokenTransferFailed` | Token transfer failed during donate or claim. |
 
 ## Storage Key Patterns
