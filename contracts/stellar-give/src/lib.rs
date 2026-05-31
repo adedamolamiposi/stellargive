@@ -78,6 +78,7 @@ pub struct Campaign {
     pub max_per_donor: Option<i128>,
     pub website: Option<String>,
     pub twitter: Option<String>,
+    pub is_private: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -121,6 +122,7 @@ pub enum ContractError {
     InvalidBeneficiary = 28,
     InvalidCategory = 30,
     CommentTooLong = 29,
+    NotWhitelisted = 31,
 }
 
 fn next_id_key() -> Symbol {
@@ -296,6 +298,23 @@ fn write_donor_contribution(env: &Env, campaign_id: u64, donor: &Address, amount
     env.storage()
         .persistent()
         .set(&donor_contribution_key(campaign_id, donor), &amount);
+}
+
+fn whitelist_key(campaign_id: u64, addr: &Address) -> (Symbol, u64, Address) {
+    (symbol_short!("WLST"), campaign_id, addr.clone())
+}
+
+fn read_whitelist(env: &Env, campaign_id: u64, addr: &Address) -> bool {
+    env.storage()
+        .persistent()
+        .get(&whitelist_key(campaign_id, addr))
+        .unwrap_or(false)
+}
+
+fn write_whitelist(env: &Env, campaign_id: u64, addr: &Address, allowed: bool) {
+    env.storage()
+        .persistent()
+        .set(&whitelist_key(campaign_id, addr), &allowed);
 }
 
 fn update_count_key(id: u64) -> (Symbol, u64) {
@@ -639,6 +658,7 @@ impl StellarGiveContract {
             max_per_donor,
             website: None,
             twitter: None,
+            is_private: false,
         };
 
         write_campaign(&env, &campaign);
@@ -688,6 +708,13 @@ impl StellarGiveContract {
 
             if campaign.status != CampaignStatus::Active {
                 return Err(ContractError::CampaignNotActive);
+            }
+
+            // If campaign is private, ensure donor is whitelisted
+            if campaign.is_private {
+                if !read_whitelist(&env, campaign_id, &donor) {
+                    return Err(ContractError::NotWhitelisted);
+                }
             }
 
             if let Some(cap) = campaign.max_per_donor {
@@ -993,6 +1020,16 @@ impl StellarGiveContract {
         Ok(campaign)
     }
 
+    /// Returns the total number of campaigns ever created.
+    ///
+    /// This value is derived from the NEXT_ID storage key and reflects all campaigns
+    /// created, including expired or cancelled campaigns.
+    #[readonly]
+    pub fn get_total_campaigns(env: Env) -> u64 {
+        let next_id = read_next_id(&env);
+        next_id.saturating_sub(1)
+    }
+
     /// Returns the top 5 donors for a campaign sorted by donated amount.
     pub fn get_top_donors(
         env: Env,
@@ -1016,6 +1053,19 @@ impl StellarGiveContract {
         } else {
             Ok(campaign.deadline - now)
         }
+    }
+
+    /// Adds a batch of addresses to the campaign whitelist. Only the creator may call.
+    pub fn add_to_whitelist(env: Env, id: u64, addresses: Vec<Address>) -> Result<(), ContractError> {
+        let mut campaign = read_campaign(&env, id)?;
+        campaign.creator.require_auth();
+
+        // Batch write whitelist entries
+        for addr in addresses.iter() {
+            write_whitelist(&env, id, addr, true);
+        }
+
+        Ok(())
     }
 
     /// Adds an update to a campaign. Maximum 10 updates allowed.
@@ -4073,6 +4123,48 @@ mod tests {
         }
 
         #[test]
+        fn private_campaign_whitelist_behavior() {
+            let (env, client, creator, beneficiary, donor, _admin, token_client, _) = setup();
+            set_timestamp(&env, 1_000);
+
+            // Create public campaign (default)
+            let bens = single_ben(&env, &beneficiary);
+            let campaign_id = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Public Campaign"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &10_000,
+                &token_client.address,
+                &None,
+            );
+
+            // Public campaign should accept any donor
+            client.donate(&donor, &campaign_id, &1_000_000, &false, &None);
+
+            // Turn campaign private by toggling storage directly (creator action)
+            let mut campaign = read_campaign(&env, campaign_id).unwrap();
+            campaign.is_private = true;
+            write_campaign(&env, &campaign);
+
+            // Non-whitelisted donor should be rejected
+            let another = Address::generate(&env);
+            let res = client.try_donate(&another, &campaign_id, &1_000_000, &false, &None);
+            assert!(res.is_err());
+            assert_eq!(res.unwrap_err().unwrap(), ContractError::NotWhitelisted);
+
+            // Creator adds donor to whitelist
+            let mut addrs = Vec::new(&env);
+            addrs.push_back(donor.clone());
+            client.add_to_whitelist(&campaign_id, &addrs);
+
+            // Now whitelisted donor can donate
+            client.donate(&donor, &campaign_id, &1_000_000, &false, &None);
+        }
+
+        #[test]
         fn get_time_left_returns_zero_when_deadline_passed() {
             let (env, client, creator, beneficiary, _donor, _admin, token_client, _) = setup();
             set_timestamp(&env, 1_000);
@@ -4195,6 +4287,96 @@ mod tests {
             set_timestamp(&env, 15_000);
             let time_left_4 = client.get_time_left(&campaign_id).unwrap();
             assert_eq!(time_left_4, 0);
+        }
+
+        #[test]
+        fn get_total_campaigns_counts_created_campaigns() {
+            let (env, client, creator, beneficiary, _donor, _admin, token_client, _) = setup();
+            set_timestamp(&env, 1_000);
+
+            assert_eq!(client.get_total_campaigns(), 0);
+
+            let bens = single_ben(&env, &beneficiary);
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 1"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &10_000,
+                &token_client.address,
+                &None,
+            );
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 2"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &20_000,
+                &token_client.address,
+                &None,
+            );
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 3"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &30_000,
+                &token_client.address,
+                &None,
+            );
+
+            assert_eq!(client.get_total_campaigns(), 3);
+        }
+
+        #[test]
+        fn get_total_campaigns_ignores_cancellations() {
+            let (env, client, creator, beneficiary, _donor, _admin, token_client, _) = setup();
+            set_timestamp(&env, 1_000);
+
+            let bens = single_ben(&env, &beneficiary);
+            let campaign_id_1 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 1"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &10_000,
+                &token_client.address,
+                &None,
+            );
+            let campaign_id_2 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 2"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &20_000,
+                &token_client.address,
+                &None,
+            );
+            let campaign_id_3 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 3"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &30_000,
+                &token_client.address,
+                &None,
+            );
+
+            client.cancel_campaign(&creator, &campaign_id_2);
+
+            assert_eq!(client.get_total_campaigns(), 3);
         }
     }
 }
