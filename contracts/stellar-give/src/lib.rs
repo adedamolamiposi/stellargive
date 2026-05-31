@@ -1010,6 +1010,16 @@ impl StellarGiveContract {
         Ok(campaign)
     }
 
+    /// Returns the total number of campaigns ever created.
+    ///
+    /// This value is derived from the NEXT_ID storage key and reflects all campaigns
+    /// created, including expired or cancelled campaigns.
+    #[readonly]
+    pub fn get_total_campaigns(env: Env) -> u64 {
+        let next_id = read_next_id(&env);
+        next_id.saturating_sub(1)
+    }
+
     /// Returns the top 5 donors for a campaign sorted by donated amount.
     pub fn get_top_donors(
         env: Env,
@@ -4237,6 +4247,96 @@ mod tests {
             set_timestamp(&env, 15_000);
             let time_left_4 = client.get_time_left(&campaign_id).unwrap();
             assert_eq!(time_left_4, 0);
+        }
+
+        #[test]
+        fn get_total_campaigns_counts_created_campaigns() {
+            let (env, client, creator, beneficiary, _donor, _admin, token_client, _) = setup();
+            set_timestamp(&env, 1_000);
+
+            assert_eq!(client.get_total_campaigns(), 0);
+
+            let bens = single_ben(&env, &beneficiary);
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 1"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &10_000,
+                &token_client.address,
+                &None,
+            );
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 2"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &20_000,
+                &token_client.address,
+                &None,
+            );
+            client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 3"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &30_000,
+                &token_client.address,
+                &None,
+            );
+
+            assert_eq!(client.get_total_campaigns(), 3);
+        }
+
+        #[test]
+        fn get_total_campaigns_ignores_cancellations() {
+            let (env, client, creator, beneficiary, _donor, _admin, token_client, _) = setup();
+            set_timestamp(&env, 1_000);
+
+            let bens = single_ben(&env, &beneficiary);
+            let campaign_id_1 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 1"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &10_000,
+                &token_client.address,
+                &None,
+            );
+            let campaign_id_2 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 2"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &20_000,
+                &token_client.address,
+                &None,
+            );
+            let campaign_id_3 = client.create_campaign(
+                &creator,
+                &bens,
+                &String::from_str(&env, "Campaign 3"),
+                &String::from_str(&env, "https://example.com/meta"),
+                &symbol_short!("relief"),
+                &10_000_000,
+                &30_000,
+                &token_client.address,
+                &None,
+            );
+
+            client.cancel_campaign(&creator, &campaign_id_2);
+
+            assert_eq!(client.get_total_campaigns(), 3);
         }
     }
 }
